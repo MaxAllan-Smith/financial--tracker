@@ -5,6 +5,16 @@ import FinancialRecord from "../models/FinancialRecord";
 import { getSession, commitSession } from "../sessions"; // Handling sessions
 import User from "../models/User"; // Assuming you have a User model
 
+export const meta = () => {
+  return [{
+    title: "Financial Tracker",
+    description: "A tool to help you manage and track your finances effectively.",
+    keywords: "finance, tracker, savings, income, expenses",
+    "og:title": "Financial Tracker",
+    "og:description": "Manage and track your finances with ease using the Financial Tracker app."
+  }];
+};
+
 // Loader function to check session and fetch financial records
 export async function loader({ request }) {
   await connectDB();
@@ -157,20 +167,20 @@ export default function Index() {
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-slate-800 to-slate-900 min-h-screen">
       {/* Login/Create Account Modal */}
       {!loggedIn && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
+        <div className="inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-xl mx-auto">
+            {" "}
+            {/* Changed max-w-md to max-w-xl */}
             {/* Toggle between Login and Create Account */}
             <h1 className="text-2xl text-black text-center font-extrabold mb-4">
               {isCreatingAccount ? "Create an Account" : "Login"}
             </h1>
-
             {/* Display error message if login or account creation fails */}
             {actionData?.error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
                 {actionData.error}
               </div>
             )}
-
             {/* Form for Login or Account Creation */}
             <Form method="post" className="space-y-4">
               <input
@@ -261,7 +271,6 @@ export default function Index() {
                 {isCreatingAccount ? "Create Account" : "Login"}
               </button>
             </Form>
-
             {/* Toggle Link */}
             <div className="text-center mt-4">
               <button
