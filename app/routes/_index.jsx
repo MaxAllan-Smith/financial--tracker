@@ -7,6 +7,7 @@ import { getUserFromSession, getSession, commitSession } from "../utils/sessions
 import AuthForm from "../components/AuthForm";
 import FinancialRecordForm from "../components/FinancialRecordForm";
 import FinancialRecordsTable from "../components/FinancialRecordsTable";
+import Navbar from "../components/Navbar";
 
 export const meta = () => {
   return [{
@@ -138,7 +139,7 @@ export default function Index() {
 
       {/* Main Content for Logged In Users */}
       {loggedIn && (
-        <div className="container mx-auto px-4 py-8 lg:px-0">
+        <><Navbar /><div className="container mx-auto px-4 py-8 lg:px-0">
           <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Financial Tracker</h1>
             <p className="text-gray-600 mb-6">
@@ -153,8 +154,7 @@ export default function Index() {
               setPercentage={setPercentage}
               name={name}
               setName={setName}
-              handleSubmit={handleSubmit}
-            />
+              handleSubmit={handleSubmit} />
 
             <Form method="post">
               <button
@@ -177,7 +177,7 @@ export default function Index() {
               <p className="text-gray-600">No financial records found.</p>
             )}
           </div>
-        </div>
+        </div></>
       )}
     </div>
   );
