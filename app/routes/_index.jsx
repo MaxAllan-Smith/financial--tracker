@@ -1,4 +1,3 @@
-// routes/index.jsx
 import { useState } from "react";
 import { Form, useLoaderData, useActionData, redirect } from "@remix-run/react";
 import connectDB from "../db/connection";
@@ -23,14 +22,9 @@ export const meta = () => {
 export async function loader({ request }) {
   await connectDB();
   
-  // Fetch user from session
   const userId = await getUserFromSession(request);
+  if (!userId) return { loggedIn: false, financialRecords: [] };
 
-  if (!userId) {
-    return { loggedIn: false, financialRecords: [] };
-  }
-
-  // Fetch financial records for the logged-in user
   const financialRecords = await FinancialRecord.find({ user: userId }).lean();
   const recordsWithTransferAmount = financialRecords.map((record) => ({
     ...record,
@@ -46,7 +40,6 @@ export async function action({ request }) {
   const actionType = formData.get("_action");
 
   await connectDB();
-
   const userId = await getUserFromSession(request);
   
   if (actionType === "login" || actionType === "createAccount") {
@@ -56,7 +49,6 @@ export async function action({ request }) {
     const lastName = formData.get("lastName");
 
     let user;
-
     if (actionType === "login") {
       user = await User.findOne({ email, password });
       if (!user) return { error: "Invalid credentials" };
@@ -132,21 +124,23 @@ export default function Index() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gradient-to-r from-slate-800 to-slate-900 min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-slate-500 to-slate-900">
       {/* Login/Create Account Modal */}
       {!loggedIn && (
-        <AuthForm
-          isCreatingAccount={isCreatingAccount}
-          error={actionData?.error}
-          toggleAccountCreation={() => setIsCreatingAccount(!isCreatingAccount)}
-        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <AuthForm
+            isCreatingAccount={isCreatingAccount}
+            error={actionData?.error}
+            toggleAccountCreation={() => setIsCreatingAccount(!isCreatingAccount)}
+          />
+        </div>
       )}
 
-      {/* Financial Tracker Form */}
+      {/* Main Content for Logged In Users */}
       {loggedIn && (
-        <>
-          <div className="container max-w-lg mx-auto p-8 bg-white rounded-lg shadow-xl mb-8">
-            <h1 className="text-2xl font-semibold mb-6 text-gray-800">Financial Tracker</h1>
+        <div className="container mx-auto px-4 py-8 lg:px-0">
+          <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Financial Tracker</h1>
             <p className="text-gray-600 mb-6">
               Plan your financial strategy by providing your income, savings percentage, and naming your strategy.
             </p>
@@ -161,12 +155,13 @@ export default function Index() {
               setName={setName}
               handleSubmit={handleSubmit}
             />
+
             <Form method="post">
               <button
                 type="submit"
                 name="_action"
                 value="logout"
-                className="w-full mt-4 bg-red-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-500"
+                className="w-full mt-6 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-500 focus:ring-4 focus:ring-red-400"
               >
                 Logout
               </button>
@@ -174,15 +169,15 @@ export default function Index() {
           </div>
 
           {/* Financial Records Table */}
-          <div className="container max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-xl">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Financial Records</h2>
+          <div className="bg-white rounded-lg shadow-xl p-8 max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Financial Records</h2>
             {financialRecords.length > 0 ? (
               <FinancialRecordsTable records={financialRecords} onEdit={handleSelectRecord} />
             ) : (
               <p className="text-gray-600">No financial records found.</p>
             )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
