@@ -125,10 +125,10 @@ export default function Index() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-slate-500 to-slate-900">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-600 to-indigo-900">
       {/* Login/Create Account Modal */}
       {!loggedIn && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
           <AuthForm
             isCreatingAccount={isCreatingAccount}
             error={actionData?.error}
@@ -139,45 +139,52 @@ export default function Index() {
 
       {/* Main Content for Logged In Users */}
       {loggedIn && (
-        <><Navbar /><div className="container mx-auto px-4 py-8 lg:px-0">
-          <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Financial Tracker</h1>
-            <p className="text-gray-600 mb-6">
-              Plan your financial strategy by providing your income, savings percentage, and naming your strategy.
-            </p>
+        <>
+          <Navbar />
+          <div className="container mx-auto px-4 py-12 lg:px-0">
+            <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto mb-12">
+              <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">Financial Tracker</h1>
+              <p className="text-gray-500 text-center mb-8">
+                Plan your financial strategy by providing your income, savings percentage, and naming your strategy.
+              </p>
 
-            <FinancialRecordForm
-              selectedRecord={selectedRecord}
-              income={income}
-              setIncome={setIncome}
-              percentage={percentage}
-              setPercentage={setPercentage}
-              name={name}
-              setName={setName}
-              handleSubmit={handleSubmit} />
+              <FinancialRecordForm
+                selectedRecord={selectedRecord}
+                income={income}
+                setIncome={setIncome}
+                percentage={percentage}
+                setPercentage={setPercentage}
+                name={name}
+                setName={setName}
+                handleSubmit={handleSubmit}
+              />
 
-            <Form method="post">
-              <button
-                type="submit"
-                name="_action"
-                value="logout"
-                className="w-full mt-6 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-500 focus:ring-4 focus:ring-red-400"
-              >
-                Logout
-              </button>
-            </Form>
+              <Form method="post" className="mt-8">
+                <button
+                  type="submit"
+                  name="_action"
+                  value="logout"
+                  className="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-500 transition duration-300 ease-in-out"
+                >
+                  Logout
+                </button>
+              </Form>
+            </div>
+
+            {/* Financial Records Table */}
+            <div className="bg-white rounded-lg shadow-xl p-8 max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Financial Records</h2>
+              {financialRecords.length > 0 ? (
+                <FinancialRecordsTable
+                  records={financialRecords}
+                  onEdit={handleSelectRecord}
+                />
+              ) : (
+                <p className="text-gray-500 text-center">No financial records found.</p>
+              )}
+            </div>
           </div>
-
-          {/* Financial Records Table */}
-          <div className="bg-white rounded-lg shadow-xl p-8 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Financial Records</h2>
-            {financialRecords.length > 0 ? (
-              <FinancialRecordsTable records={financialRecords} onEdit={handleSelectRecord} />
-            ) : (
-              <p className="text-gray-600">No financial records found.</p>
-            )}
-          </div>
-        </div></>
+        </>
       )}
     </div>
   );
